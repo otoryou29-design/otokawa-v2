@@ -1,7 +1,7 @@
-import crypto from 'crypto'
+himport crypto from 'crypto'
 
-const CLIENT_ID      = 'IHR2vHw4Z2B1lpLyXABb'
-const CLIENT_SECRET  = 'pV80_Aj0CY'
+const CLIENT_ID      = 'lHR2vHw4Z2B1IpLyXABb'
+const CLIENT_SECRET  = 'hpV80_Aj0CY'
 const SERVICE_ACCOUNT = 'j3fl4.serviceaccount@works-38283'
 const BOT_ID         = '11818155'
 const CHANNEL_ID     = '5fb09f65-4ba0-c397-b76f-3bd75e48b288'

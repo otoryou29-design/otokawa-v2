@@ -8,6 +8,12 @@ import {
 } from "./data"
 
 
+const isTsuruhaDay = () => { const d = new Date().getDate(); return d===1||d===10||d===20 }
+const gpN = (p,c) => p>0 ? Math.round((p-c)/p*100) : 0
+const fmtJP = (n) => { if(n>=100000000) return `${(n/100000000).toFixed(1)}億円`; if(n>=10000) return `${Math.round(n/10000)}万円`; return `${n.toLocaleString()}円` }
+const safeNum = (s) => Number(String(s||0).replace(/,/g,""))||0
+const fmt = v => `¥${Number(v||0).toLocaleString()}`
+
 function parseExcelFile(file) {
   return new Promise((resolve,reject) => {
     const reader = new FileReader()

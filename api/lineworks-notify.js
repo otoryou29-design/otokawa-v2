@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+const crypto = require('crypto')
 
 const CLIENT_ID      = 'lHR2vHw4Z2B1IpLyXABb'
 const CLIENT_SECRET  = 'pV80_Aj0CY'
@@ -68,7 +68,7 @@ async function getAccessToken() {
   return data.access_token
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const { message } = req.body

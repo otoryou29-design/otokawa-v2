@@ -525,24 +525,6 @@ export default function App() {
                     </div>
                   ))}
                 </div>
-                {(rd.storeRanking||[]).length>0&&(
-                  <div className="card" style={{padding:20}}>
-                    <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>🏬 店舗別売上ランキング</div>
-                    {rd.storeRanking.map((s,i)=>(
-                      <div key={i} style={{display:"grid",gridTemplateColumns:"26px 1fr 110px 50px",alignItems:"center",gap:10,marginBottom:11}}>
-                        <div style={{fontSize:13,fontWeight:900,textAlign:"center",color:i===0?"#d97706":i===1?"#6b7280":i===2?"#b45309":"#d1d5db"}}>{i+1}</div>
-                        <div>
-                          <div style={{fontSize:14,fontWeight:600}}>{s.name}</div>
-                          <div style={{height:5,background:"#f0f0f0",borderRadius:3,marginTop:4,overflow:"hidden"}}>
-                            <div style={{height:"100%",width:`${Math.round((s.sales/(rd.storeRanking[0].sales||1))*100)}%`,background:i===0?"#d97706":accent,borderRadius:3}}/>
-                          </div>
-                        </div>
-                        <div style={{fontSize:14,fontWeight:800,color:"#2563eb",textAlign:"right",fontFamily:"'IBM Plex Mono',monospace"}}>{fmtJP(s.sales)}</div>
-                        <div style={{fontSize:12,color:"#6b7280",textAlign:"right"}}>{s.pct}%</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
                 {(rd.prodSales||[]).length>0&&(
                   <div className="card" style={{padding:20}}>
                     <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>🏆 人気商品 TOP5</div>
@@ -557,6 +539,24 @@ export default function App() {
                         </div>
                         <div style={{fontSize:14,fontWeight:800,color:"#dc2626",textAlign:"right",fontFamily:"'IBM Plex Mono',monospace"}}>{fmtJP(p.sales)}</div>
                         <div style={{fontSize:12,color:"#6b7280",textAlign:"right"}}>{p.pct}%</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {(rd.storeRanking||[]).length>0&&(
+                  <div className="card" style={{padding:20}}>
+                    <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>🏬 店舗別売上ランキング</div>
+                    {rd.storeRanking.map((s,i)=>(
+                      <div key={i} style={{display:"grid",gridTemplateColumns:"26px 1fr 110px 50px",alignItems:"center",gap:10,marginBottom:11}}>
+                        <div style={{fontSize:13,fontWeight:900,textAlign:"center",color:i===0?"#d97706":i===1?"#6b7280":i===2?"#b45309":"#d1d5db"}}>{i+1}</div>
+                        <div>
+                          <div style={{fontSize:14,fontWeight:600}}>{s.name}</div>
+                          <div style={{height:5,background:"#f0f0f0",borderRadius:3,marginTop:4,overflow:"hidden"}}>
+                            <div style={{height:"100%",width:`${Math.round((s.sales/(rd.storeRanking[0].sales||1))*100)}%`,background:i===0?"#d97706":accent,borderRadius:3}}/>
+                          </div>
+                        </div>
+                        <div style={{fontSize:14,fontWeight:800,color:"#2563eb",textAlign:"right",fontFamily:"'IBM Plex Mono',monospace"}}>{fmtJP(s.sales)}</div>
+                        <div style={{fontSize:12,color:"#6b7280",textAlign:"right"}}>{s.pct}%</div>
                       </div>
                     ))}
                   </div>

@@ -515,14 +515,6 @@ export default function App() {
         {tab==="sales" && (
           <div style={{display:"grid",gap:18}}>
             <h2 style={{fontSize:20,fontWeight:900}}>📊 売上レポート {rd&&<span style={{fontSize:14,fontWeight:400,color:"#6b7280"}}>{rd.period}</span>}</h2>
-            <div className="card" style={{padding:20}}>
-              <div style={{fontSize:14,fontWeight:800,marginBottom:10}}>📥 LINEワークス レポート貼り付け</div>
-              <textarea value={pasteText} onChange={e=>{setPasteText(e.target.value);setParseError(false)}} rows={6} style={{resize:"vertical",fontSize:13,lineHeight:1.8}} placeholder="LINEワークスのレポートをここにコピペ..."/>
-              {parseError&&<div style={{background:"#fee2e2",borderRadius:8,padding:"8px 12px",marginTop:9,fontSize:13,color:"#dc2626"}}>⚠️ 解析できませんでした</div>}
-              <div style={{display:"flex",gap:9,justifyContent:"flex-end",marginTop:11}}>
-                <Btn onClick={()=>{const p=parseReport(pasteText);if(!p||(!(p.totalSales>0)&&!(p.totalQty>0)&&!(p.storeRanking||[]).length)){setParseError(true);return};setParseError(false);setReportData(p);setPasteText("")}} style={{padding:"8px 22px",background:pasteText.length>10?accent:"#d1d5db"}}>✅ 反映する</Btn>
-              </div>
-            </div>
             {rd&&(
               <>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:11}}>

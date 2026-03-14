@@ -8,7 +8,8 @@ export const DISCOUNT_DAYS = {
   "ごぼう":{days:14},"長いもパック":{days:10},
 }
 
-// 催事コンテナ目安（ランク別）
+// 催事コンテナ目安（ランク別） — S追加
+export const EVENT_CONTAINER_TARGET = { S:12, A:8, B:6, C:4, D:"MG相談" }
 
 export const INITIAL_PRODUCTS = [
   {id:"A1",rack:"A1",cat:"葉物",name:"レタスL",origin:"茨城",price:198,cost:100,displayQty:4,makeQty:60},
@@ -70,49 +71,52 @@ export const INITIAL_EVENT = [
 
 export const DEFAULT_STORES = [
   // ── 須賀川：月・水・土
-  {id:2,area:"須賀川",name:"須賀川大袋店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:00",shelfSize:"2m40cm",eventSetup:"90×90(1台)",outsideSale:"有",advisors:"助川",note:""},
-  {id:3,area:"須賀川",name:"須賀川南店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:15",shelfSize:"1m20cm",eventSetup:"なし",outsideSale:"無",advisors:"助川",note:""},
-  {id:4,area:"須賀川",name:"須賀川西店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:45",shelfSize:"1m20cm",eventSetup:"90×90(1台)",outsideSale:"有",advisors:"助川",note:""},
+  {id:2,area:"須賀川",name:"須賀川大袋店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:00",eventSetup:"90×90(1台)",advisors:"助川",note:""},
+  {id:3,area:"須賀川",name:"須賀川南店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:15",eventSetup:"なし",advisors:"助川",note:""},
+  {id:4,area:"須賀川",name:"須賀川西店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:45",eventSetup:"90×90(1台)",advisors:"助川",note:""},
   // ── 郡山：月・水・土
-  {id:6,area:"郡山",name:"郡山守山店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"13:00",shelfSize:"1m20cm",eventSetup:"150cm(1台)",outsideSale:"有",advisors:"助川",note:""},
-  {id:25,area:"郡山",name:"堤店",rank:"B",logistics:"自社",deliveryDays:"月・水・土",time:"自社(午前)",shelfSize:"なし",eventSetup:"なし",outsideSale:"有",advisors:"助川",note:""},
-  {id:26,area:"郡山",name:"久保田店",rank:"B",logistics:"自社",deliveryDays:"月・水・土",time:"自社(午前)",shelfSize:"なし",eventSetup:"コンテナ",outsideSale:"有",advisors:"助川",note:""},
-  {id:27,area:"郡山",name:"郡山富田店",rank:"A",logistics:"自社",deliveryDays:"月・水・土",time:"自社(午前)",shelfSize:"2m40cm",eventSetup:"なし",outsideSale:"有",advisors:"助川",note:""},
+  {id:6,area:"郡山",name:"郡山守山店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"13:00",eventSetup:"150cm(1台)",advisors:"助川",note:""},
+  {id:25,area:"郡山",name:"堤店",rank:"B",logistics:"自社",deliveryDays:"月・水・土",time:"自社(午前)",eventSetup:"なし",advisors:"助川",note:""},
+  {id:26,area:"郡山",name:"久保田店",rank:"B",logistics:"自社",deliveryDays:"月・水・土",time:"自社(午前)",eventSetup:"コンテナ",advisors:"助川",note:""},
+  {id:27,area:"郡山",name:"郡山富田店",rank:"A",logistics:"自社",deliveryDays:"月・水・土",time:"自社(午前)",eventSetup:"なし",advisors:"助川",note:""},
   // ── 矢吹：月・水・土
-  {id:7,area:"矢吹",name:"矢吹北店",rank:"D",logistics:"アサヒ",deliveryDays:"月・水・土",time:"16:00",shelfSize:"2m40cm",eventSetup:"なし",outsideSale:"有",advisors:"神谷・長久保",note:""},
+  {id:7,area:"矢吹",name:"矢吹北店",rank:"D",logistics:"アサヒ",deliveryDays:"月・水・土",time:"16:00",eventSetup:"なし",advisors:"神谷・長久保",note:""},
   // ── 白河：月・水・土
-  {id:10,area:"白河",name:"白河結城店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"13:40",shelfSize:"1m20cm",eventSetup:"180cm(2台)",outsideSale:"有",advisors:"神谷・長久保",note:""},
-  {id:11,area:"白河",name:"白河西店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"14:25",shelfSize:"2m40cm",eventSetup:"180cm(1台)",outsideSale:"有",advisors:"神谷・長久保",note:""},
-  {id:12,area:"白河",name:"白河表郷店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"13:10",shelfSize:"1m20cm",eventSetup:"180cm(2台)",outsideSale:"有",advisors:"神谷・長久保",note:""},
-  {id:13,area:"白河",name:"泉崎店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"15:25",shelfSize:"2m40cm",eventSetup:"150cm(2台)",outsideSale:"有",advisors:"神谷・長久保",note:""},
-  {id:14,area:"白河",name:"白河浅川店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:35",shelfSize:"1m20cm",eventSetup:"150cm(1台)",outsideSale:"有",advisors:"神谷・長久保",note:""},
-  {id:15,area:"白河",name:"白河西郷店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"15:00",shelfSize:"1m20cm",eventSetup:"150cm(1台)",outsideSale:"有",advisors:"神谷・長久保",note:""},
-  {id:16,area:"白河",name:"矢祭店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"8:30",shelfSize:"1m20cm",eventSetup:"150cm(2台)",outsideSale:"有",advisors:"長久保",note:""},
-  {id:17,area:"白河",name:"塙店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"8:55",shelfSize:"なし",eventSetup:"150cm(2台)",outsideSale:"有",advisors:"長久保",note:""},
-  {id:18,area:"白河",name:"棚倉店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:15",shelfSize:"1m20cm",eventSetup:"150cm(2台)",outsideSale:"有",advisors:"長久保",note:""},
-  {id:19,area:"白河",name:"石川店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"10:00",shelfSize:"1m20cm",eventSetup:"150cm(2台)",outsideSale:"有",advisors:"長久保",note:""},
-  {id:20,area:"白河",name:"古殿店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"10:35",shelfSize:"1m20cm",eventSetup:"180cm(1台)",outsideSale:"有",advisors:"長久保",note:""},
-  {id:21,area:"白河",name:"白河東店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"12:35",shelfSize:"1m20cm",eventSetup:"150cm(2台)",outsideSale:"有",advisors:"長久保",note:""},
-  {id:22,area:"白河",name:"白河白坂店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"12:35",shelfSize:"1m20cm",eventSetup:"150cm(1台)",outsideSale:"有",advisors:"長久保",note:""},
+  {id:10,area:"白河",name:"白河結城店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"13:40",eventSetup:"180cm(2台)",advisors:"神谷・長久保",note:""},
+  {id:11,area:"白河",name:"白河西店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"14:25",eventSetup:"180cm(1台)",advisors:"神谷・長久保",note:""},
+  {id:12,area:"白河",name:"白河表郷店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"13:10",eventSetup:"180cm(2台)",advisors:"神谷・長久保",note:""},
+  {id:13,area:"白河",name:"泉崎店",rank:"S",logistics:"アサヒ",deliveryDays:"月・水・土",time:"15:25",eventSetup:"150cm(2台)",advisors:"神谷・長久保",note:""},
+  {id:14,area:"白河",name:"白河浅川店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:35",eventSetup:"150cm(1台)",advisors:"神谷・長久保",note:""},
+  {id:15,area:"白河",name:"白河西郷店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"15:00",eventSetup:"150cm(1台)",advisors:"神谷・長久保",note:""},
+  {id:16,area:"白河",name:"矢祭店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"8:30",eventSetup:"150cm(2台)",advisors:"長久保",note:""},
+  {id:17,area:"白河",name:"塙店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"8:55",eventSetup:"150cm(2台)",advisors:"長久保",note:""},
+  {id:18,area:"白河",name:"棚倉店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"9:15",eventSetup:"150cm(2台)",advisors:"長久保",note:""},
+  {id:19,area:"白河",name:"石川店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"10:00",eventSetup:"150cm(2台)",advisors:"長久保",note:""},
+  {id:20,area:"白河",name:"古殿店",rank:"B",logistics:"アサヒ",deliveryDays:"月・水・土",time:"10:35",eventSetup:"180cm(1台)",advisors:"長久保",note:""},
+  {id:21,area:"白河",name:"白河東店",rank:"C",logistics:"アサヒ",deliveryDays:"月・水・土",time:"12:35",eventSetup:"150cm(2台)",advisors:"長久保",note:""},
+  {id:22,area:"白河",name:"白河白坂店",rank:"A",logistics:"アサヒ",deliveryDays:"月・水・土",time:"12:35",eventSetup:"150cm(1台)",advisors:"長久保",note:""},
   // ── 会津：火・金・日
-  {id:28,area:"会津",name:"会津坂下店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"2m40cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:30,area:"会津",name:"喜多方塩川店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:31,area:"会津",name:"会津坂下インター店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"2m40cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:32,area:"会津",name:"喜多方上江店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:33,area:"会津",name:"猪苗代店",rank:"C",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:34,area:"会津",name:"喜多方南店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"2m40cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:36,area:"会津",name:"会津門田店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"なし",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:37,area:"会津",name:"会津高田店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
-  {id:38,area:"会津",name:"南会津バイパス店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:"冷蔵なし"},
+  {id:28,area:"会津",name:"会津坂下店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:30,area:"会津",name:"喜多方塩川店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:31,area:"会津",name:"会津坂下インター店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:32,area:"会津",name:"喜多方上江店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:33,area:"会津",name:"猪苗代店",rank:"C",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:34,area:"会津",name:"喜多方南店",rank:"S",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:36,area:"会津",name:"会津門田店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:37,area:"会津",name:"会津高田店",rank:"B",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
+  {id:38,area:"会津",name:"南会津バイパス店",rank:"A",logistics:"アサヒ",deliveryDays:"火・金・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:"冷蔵なし"},
   // ── いわき：月・木・土
-  {id:23,area:"いわき",name:"小野店",rank:"A",logistics:"自社",deliveryDays:"月・木・土",time:"自社(午前)",shelfSize:"1m20cm",eventSetup:"150cm(1台)",outsideSale:"有",advisors:"助川",note:""},
-  {id:24,area:"いわき",name:"平田店",rank:"B",logistics:"自社",deliveryDays:"月・木・土",time:"自社(午前)",shelfSize:"1m20cm",eventSetup:"なし",outsideSale:"有",advisors:"助川",note:""},
-  {id:39,area:"いわき",name:"下神谷店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",shelfSize:"1m20cm",eventSetup:"180cm(1台)",outsideSale:"無",advisors:"―",note:""},
-  {id:40,area:"いわき",name:"神谷店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:""},
-  {id:41,area:"いわき",name:"久ノ浜店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:""},
-  {id:42,area:"いわき",name:"平窪店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:""},
-  {id:43,area:"いわき",name:"小名浜店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:""},
-  {id:44,area:"いわき",name:"小名浜神白店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",shelfSize:"1m20cm",eventSetup:"コンテナ",outsideSale:"無",advisors:"―",note:""},
+  {id:23,area:"いわき",name:"小野店",rank:"A",logistics:"自社",deliveryDays:"月・木・土",time:"自社(午前)",eventSetup:"150cm(1台)",advisors:"助川",note:""},
+  {id:24,area:"いわき",name:"平田店",rank:"B",logistics:"自社",deliveryDays:"月・木・土",time:"自社(午前)",eventSetup:"なし",advisors:"助川",note:""},
+  {id:39,area:"いわき",name:"下神谷店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",eventSetup:"180cm(1台)",advisors:"―",note:""},
+  {id:40,area:"いわき",name:"神谷店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
+  {id:41,area:"いわき",name:"久ノ浜店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
+  {id:42,area:"いわき",name:"平窪店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
+  {id:43,area:"いわき",name:"小名浜店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
+  {id:44,area:"いわき",name:"小名浜神白店",rank:"B",logistics:"アサヒ",deliveryDays:"月・木・土",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
+  // ── 福島：火・木・日
+  {id:50,area:"福島",name:"福島北店",rank:"A",logistics:"アサヒ",deliveryDays:"火・木・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
+  {id:51,area:"福島",name:"福島南店",rank:"B",logistics:"アサヒ",deliveryDays:"火・木・日",time:"―",eventSetup:"コンテナ",advisors:"―",note:""},
 ]
 
 export const INITIAL_TICKER = [
@@ -128,7 +132,18 @@ export const INITIAL_WEEKLY = [
   {date:"2026-03-10",name:"長久保",note:"矢祭・塙は売上順調。",storeMsg:"矢祭より週末向けに増量希望",isNew:false,mgRead:true},
 ]
 
-export const AREAS = ["全エリア","郡山","須賀川","矢吹","白河","会津","いわき"]
+// デフォルト配送スケジュール（エリア → 曜日配列）
+export const DEFAULT_DELIVERY_SCHEDULE = {
+  "白河":   ["月","水","土"],
+  "須賀川": ["月","水","土"],
+  "郡山":   ["月","水","土"],
+  "矢吹":   ["月","水","土"],
+  "会津":   ["火","金","日"],
+  "いわき": ["月","木","土"],
+  "福島":   ["火","木","日"],
+}
+
+export const AREAS = ["全エリア","郡山","須賀川","矢吹","白河","会津","いわき","福島"]
 export const CATS  = ["葉物","果菜","薬味","カット","きのこ","根菜","土もの","果物"]
 export const CAT   = {葉物:{bg:"#dcfce7",tx:"#166534",bd:"#86efac"},果菜:{bg:"#fee2e2",tx:"#991b1b",bd:"#fca5a5"},薬味:{bg:"#fef9c3",tx:"#854d0e",bd:"#fde047"},カット:{bg:"#dbeafe",tx:"#1e40af",bd:"#93c5fd"},きのこ:{bg:"#ede9fe",tx:"#5b21b6",bd:"#c4b5fd"},根菜:{bg:"#ffedd5",tx:"#9a3412",bd:"#fdba74"},土もの:{bg:"#f5f0e8",tx:"#78350f",bd:"#d6b97a"},果物:{bg:"#fce7f3",tx:"#9d174d",bd:"#f9a8d4"}}
-export const RANK  = {S:{bg:"#f3e8ff",tx:"#6b21a8"},A:{bg:"#fef9c3",tx:"#92400e"},B:{bg:"#dbeafe",tx:"#1e40af"},C:{bg:"#dcfce7",tx:"#166534"},D:{bg:"#fee2e2",tx:"#991b1b"}}
+export const RANK  = {S:{bg:"#fde68a",tx:"#78350f"},A:{bg:"#fef9c3",tx:"#92400e"},B:{bg:"#dbeafe",tx:"#1e40af"},C:{bg:"#dcfce7",tx:"#166534"},D:{bg:"#fee2e2",tx:"#991b1b"}}

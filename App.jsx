@@ -22,8 +22,8 @@ const sendLineWorks = async (message) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     })
-    const data = await res.json()
-    if (!data.ok) throw new Error(data.error)
+    const text = await res.text()
+    if (!res.ok) throw new Error(text || `HTTP ${res.status}`)
     return true
   } catch(e) {
     alert('LINE WORKS通知エラー: ' + e.message)
@@ -154,6 +154,7 @@ export default function App() {
   const [pickingDone,setPickingDone]     = useState({})  // {storeId: true/false}
   const [pickingDayFilter,setPickingDayFilter] = useState("auto") // "auto"|"全体"|"月"|"火"|"水"|"木"|"金"|"土"|"日"
 
+  const [regularCat,setRegularCat]         = useState("全て")
   const [showAddEvent,setShowAddEvent]     = useState(false)
   const [newEventItem,setNewEventItem]     = useState({name:"",price:"",cost:"",qty:"",origin:"",note:""})
 
@@ -671,11 +672,14 @@ export default function App() {
           const regDoneCount=products.filter(p=>(regularStatus[p.id]||{}).status==="done").length
           const regShortCount=products.filter(p=>(regularStatus[p.id]||{}).status==="shortage").length
           const regAllConfirmed=products.length>0&&(regDoneCount+regShortCount)===products.length
-          const sorted=[...products].sort((a,b)=>{
-            const sa=(regularStatus[a.id]||{}).status, sb=(regularStatus[b.id]||{}).status
-            const rA=sa==="pending"||!sa?0:1, rB=sb==="pending"||!sb?0:1
-            return rA-rB
-          })
+          const CATS_REG=["全て",...new Set(products.map(p=>p.cat).filter(Boolean))]
+          const sorted=[...products]
+            .filter(p=>regularCat==="全て"||p.cat===regularCat)
+            .sort((a,b)=>{
+              const sa=(regularStatus[a.id]||{}).status, sb=(regularStatus[b.id]||{}).status
+              const rA=sa==="pending"||!sa?0:1, rB=sb==="pending"||!sb?0:1
+              return rA-rB
+            })
           return (
           <div style={{display:"grid",gap:18}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:12}}>
@@ -707,16 +711,14 @@ export default function App() {
               </div>
             )}
 
-            <div style={{background:"#fee2e2",border:"2px solid #fca5a5",borderRadius:12,padding:"14px 18px"}}>
-              <div style={{fontSize:14,fontWeight:900,color:"#dc2626",marginBottom:10}}>⚠️ パッケージ作業 注意事項</div>
-              <div style={{display:"grid",gap:7}}>
-                {[["💰","コンテナ内はパンパンに詰めること（物流費削減）"],["✅","作成が終わったら必ず品目ごとに「作成済み」を押すこと"],["🔢","実際の作成数を入力して確定させること"],["❌","完成できなかった品目は「欠品」ボタンを押すこと"],["🏁","全品目確認後、必ず最終確認ボタンで業務終了を報告"]].map(([ic,tx])=>(
-                  <div key={tx} style={{display:"flex",gap:9,alignItems:"flex-start"}}>
-                    <span style={{fontSize:16,flexShrink:0}}>{ic}</span>
-                    <span style={{fontSize:13,color:"#991b1b",lineHeight:1.6,fontWeight:600}}>{tx}</span>
-                  </div>
+            {/* カテゴリフィルター + 一括リセット */}
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10}}>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                {CATS_REG.map(c=>(
+                  <button key={c} onClick={()=>setRegularCat(c)} style={{padding:"5px 13px",borderRadius:20,fontSize:12,fontWeight:regularCat===c?800:500,border:"2px solid",borderColor:regularCat===c?accent:"#dde5de",background:regularCat===c?accent:"#fff",color:regularCat===c?"#fff":"#4a5568",cursor:"pointer"}}>{c}</button>
                 ))}
               </div>
+              <button onClick={()=>{const e={};setRegularStatus(e);dbSet("regularStatus",e);setRegularFinalized(null);dbSet("regularFinalized",null)}} style={{padding:"7px 14px",background:"#fff",border:"2px solid #dc2626",borderRadius:9,fontSize:12,fontWeight:700,color:"#dc2626",cursor:"pointer"}}>🔄 一括リセット</button>
             </div>
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))",gap:12}}>
@@ -811,23 +813,9 @@ export default function App() {
               </div>
             )}
 
-            {/* 注意喚起 */}
-            <div style={{background:"#fee2e2",border:"2px solid #fca5a5",borderRadius:12,padding:"14px 18px"}}>
-              <div style={{fontSize:14,fontWeight:900,color:"#dc2626",marginBottom:10}}>⚠️ パッケージ作業 注意事項</div>
-              <div style={{display:"grid",gap:7}}>
-                {[
-                  ["💰","物流費がかかるため、コンテナ内はパンパンに詰めること"],
-                  ["✅","作成が終わったら必ず品目ごとに「作成済み」を押してチェックを入れること"],
-                  ["🔢","作成数を入力し「確定」させること"],
-                  ["❌","完成できなかった品目は「欠品」ボタンを押すこと"],
-                  ["🏁","全品目確認後、必ず最終確認ボタンを押して業務終了を報告すること"],
-                ].map(([ic,tx])=>(
-                  <div key={tx} style={{display:"flex",gap:9,alignItems:"flex-start"}}>
-                    <span style={{fontSize:16,flexShrink:0}}>{ic}</span>
-                    <span style={{fontSize:13,color:"#991b1b",lineHeight:1.6,fontWeight:600}}>{tx}</span>
-                  </div>
-                ))}
-              </div>
+            {/* 一括リセット */}
+            <div style={{display:"flex",justifyContent:"flex-end"}}>
+              <button onClick={()=>{const e={};setEventStatus(e);dbSet("eventStatus",e);setPackageFinalized(null);dbSet("packageFinalized",null)}} style={{padding:"7px 14px",background:"#fff",border:"2px solid #dc2626",borderRadius:9,fontSize:12,fontWeight:700,color:"#dc2626",cursor:"pointer"}}>🔄 一括リセット</button>
             </div>
 
             {/* 品目カード */}

@@ -181,6 +181,9 @@ export default function App() {
   const [weeklyReports,setWeeklyReports] = useState([])
   const [tickerItems,setTickerItems]     = useState(INITIAL_TICKER)
   const [reportData,setReportData]       = useState(null)
+  const [dailySalesHistory,setDailySalesHistory] = useState({})
+  const [selectedDate,setSelectedDate]   = useState("")
+  const [viewMonth,setViewMonth]         = useState(() => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}` })
 
   const xlsxRef  = useRef()
   const storeRef = useRef()
@@ -239,6 +242,7 @@ export default function App() {
       dbListen("pickingDone",      v => setPickingDone(v||{})),
       dbListen("eventContainerTargets", v => setEventContainerTargets(v||{})),
       dbListen("deliveryDayOverrides",  v => setDeliveryDayOverrides(v||{})),
+      dbListen("dailySales",             v => setDailySalesHistory(v||{})),
       dbListen("weeklyReports",    v => {
         if(!v) return
         const arr=Object.entries(v).map(([k,r])=>({...r,_key:k}))
@@ -418,7 +422,8 @@ export default function App() {
     XLSX.writeFile(wb2,`ダッシュボード_${now.toISOString().slice(0,10)}.xlsx`)
   }
 
-  const rd = reportData
+  // 日付選択時はdailySalesHistoryから、未選択時はreportDataを使用
+  const rd = selectedDate && dailySalesHistory[selectedDate] ? dailySalesHistory[selectedDate] : reportData
   const hotSet = rd ? new Set((rd.prodSales||[]).map(p=>p.name.replace(/\s/g,""))) : new Set()
   const isHot  = name => [...hotSet].some(h=>name.replace(/\s/g,"").includes(h)||h.includes(name.replace(/\s/g,"")))
   const filtProducts = catFilter==="全品目" ? products : products.filter(p=>p.cat===catFilter)
@@ -512,9 +517,76 @@ export default function App() {
       <div style={{padding:"20px 18px 80px",maxWidth:1400,margin:"0 auto"}} className="fade" key={tab}>
 
         {/* ── 売上 */}
-        {tab==="sales" && (
+        {tab==="sales" && (() => {
+          const [vmY,vmM] = viewMonth.split("-").map(Number)
+          const prevMonth = () => { const d=new Date(vmY,vmM-2,1); setViewMonth(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`) }
+          const nextMonth = () => { const d=new Date(vmY,vmM,1); setViewMonth(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`) }
+          // 当月の日別データを集計
+          const monthPrefix = viewMonth
+          const monthDays = Object.entries(dailySalesHistory)
+            .filter(([date])=>date.startsWith(monthPrefix))
+            .sort(([a],[b])=>a.localeCompare(b))
+          const monthTotalSales = monthDays.reduce((s,[,d])=>s+(d.totalSales||0),0)
+          const monthTotalQty = monthDays.reduce((s,[,d])=>s+(d.totalQty||0),0)
+          const monthAvgDaily = monthDays.length>0 ? Math.round(monthTotalSales/monthDays.length) : 0
+          const maxDaySales = monthDays.reduce((m,[,d])=>Math.max(m,d.totalSales||0),0)
+          return (
           <div style={{display:"grid",gap:18}}>
-            <h2 style={{fontSize:20,fontWeight:900}}>📊 売上レポート {rd&&<span style={{fontSize:14,fontWeight:400,color:"#6b7280"}}>{rd.period}</span>}</h2>
+            {/* 月切替 */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16}}>
+              <button onClick={prevMonth} style={{background:"none",border:`2px solid ${accent}`,borderRadius:8,padding:"6px 14px",fontSize:16,fontWeight:900,color:accent,cursor:"pointer"}}>&lt;</button>
+              <span style={{fontSize:18,fontWeight:900,color:"#1c1c1e",fontFamily:"'IBM Plex Mono',monospace"}}>{vmY}年{vmM}月</span>
+              <button onClick={nextMonth} style={{background:"none",border:`2px solid ${accent}`,borderRadius:8,padding:"6px 14px",fontSize:16,fontWeight:900,color:accent,cursor:"pointer"}}>&gt;</button>
+            </div>
+
+            {/* 月間サマリーカード */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:10}}>
+              {[
+                {l:"月間売上",v:fmtJP(monthTotalSales),c:"#16a34a"},
+                {l:"月間数量",v:`${monthTotalQty.toLocaleString()}点`,c:"#2563eb"},
+                {l:"日販平均",v:fmtJP(monthAvgDaily),c:"#7c3aed"},
+                {l:"営業日数",v:`${monthDays.length}日`,c:accent}
+              ].map(k=>(
+                <div key={k.l} className="card" style={{padding:14}}>
+                  <div style={{fontSize:11,color:"#6b7280",marginBottom:4}}>{k.l}</div>
+                  <div style={{fontSize:20,fontWeight:900,color:k.c,fontFamily:"'IBM Plex Mono',monospace"}}>{k.v}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* 日別売上推移チャート */}
+            {monthDays.length>0 && (
+              <div className="card" style={{padding:18}}>
+                <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>📈 日別売上推移</div>
+                <div style={{display:"flex",alignItems:"flex-end",gap:2,height:200,overflowX:"auto",paddingBottom:24,position:"relative"}}>
+                  {monthDays.map(([date,d])=>{
+                    const dayNum=date.split("-")[2]
+                    const sales=d.totalSales||0
+                    const pct=maxDaySales>0?Math.round(sales/maxDaySales*100):0
+                    const isSelected=selectedDate===date
+                    return (
+                      <div key={date} onClick={()=>setSelectedDate(isSelected?"":date)} style={{flex:1,minWidth:22,maxWidth:40,display:"flex",flexDirection:"column",alignItems:"center",cursor:"pointer",position:"relative",height:"100%",justifyContent:"flex-end"}}>
+                        <div style={{fontSize:9,fontWeight:700,color:"#6b7280",marginBottom:2,fontFamily:"'IBM Plex Mono',monospace",whiteSpace:"nowrap"}}>{sales>=10000?`${Math.round(sales/10000)}万`:sales>0?`${Math.round(sales/1000)}k`:""}</div>
+                        <div style={{width:"80%",minHeight:2,height:`${pct}%`,background:isSelected?"#dc2626":accent,borderRadius:"4px 4px 0 0",transition:"all .2s",opacity:isSelected?1:.8}}/>
+                        <div style={{fontSize:10,fontWeight:isSelected?900:600,color:isSelected?"#dc2626":"#6b7280",marginTop:4,fontFamily:"'IBM Plex Mono',monospace",position:"absolute",bottom:-20}}>{dayNum}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 売上レポート + 日付ピッカー */}
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10}}>
+              <h2 style={{fontSize:20,fontWeight:900}}>📊 売上レポート {rd&&<span style={{fontSize:14,fontWeight:400,color:"#6b7280"}}>{rd.period}</span>}</h2>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <input type="date" value={selectedDate} onChange={e=>setSelectedDate(e.target.value)} style={{padding:"6px 10px",fontSize:13,fontWeight:600,border:`2px solid ${accent}`,borderRadius:8,background:"#fff",fontFamily:"'IBM Plex Mono',monospace",width:160}}/>
+                {selectedDate&&<button onClick={()=>setSelectedDate("")} style={{background:"none",border:`1.5px solid #dc2626`,borderRadius:6,padding:"5px 10px",fontSize:12,fontWeight:700,color:"#dc2626",cursor:"pointer"}}>最新に戻す</button>}
+              </div>
+            </div>
+            {selectedDate&&!dailySalesHistory[selectedDate]&&(
+              <div style={{background:"#fef9c3",border:"1.5px solid #fde047",borderRadius:10,padding:"10px 16px",fontSize:13,fontWeight:600,color:"#854d0e"}}>📅 {selectedDate} のデータはまだありません</div>
+            )}
             {rd&&(
               <>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:11}}>
@@ -564,7 +636,8 @@ export default function App() {
               </>
             )}
           </div>
-        )}
+          )
+        })()}
 
         {/* ── 棚割表 */}
         {tab==="shelf" && (

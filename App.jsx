@@ -551,6 +551,24 @@ export default function App() {
                     ))}
                   </div>
                 )}
+                {(rd.prodSales||[]).length>0&&(
+                  <div className="card" style={{padding:20}}>
+                    <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>🏆 人気商品 TOP5</div>
+                    {rd.prodSales.slice(0,5).map((p,i)=>(
+                      <div key={i} style={{display:"grid",gridTemplateColumns:"26px 1fr 110px 50px",alignItems:"center",gap:10,marginBottom:11}}>
+                        <div style={{fontSize:13,fontWeight:900,textAlign:"center",color:i===0?"#dc2626":i===1?"#ea580c":i===2?"#d97706":"#6b7280"}}>{i+1}</div>
+                        <div>
+                          <div style={{fontSize:14,fontWeight:600}}>{p.name}</div>
+                          <div style={{height:5,background:"#f0f0f0",borderRadius:3,marginTop:4,overflow:"hidden"}}>
+                            <div style={{height:"100%",width:`${Math.round((p.sales/(rd.prodSales[0].sales||1))*100)}%`,background:i===0?"#dc2626":"#f97316",borderRadius:3}}/>
+                          </div>
+                        </div>
+                        <div style={{fontSize:14,fontWeight:800,color:"#dc2626",textAlign:"right",fontFamily:"'IBM Plex Mono',monospace"}}>{fmtJP(p.sales)}</div>
+                        <div style={{fontSize:12,color:"#6b7280",textAlign:"right"}}>{p.pct}%</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>

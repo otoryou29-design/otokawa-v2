@@ -15,12 +15,12 @@ const safeNum = (s) => Number(String(s||0).replace(/,/g,""))||0
 const fmt = v => `¥${Number(v||0).toLocaleString()}`
 
 
-const sendLineWorks = async (message) => {
+const sendLineWorks = async (message, opts = {}) => {
   try {
     const res = await fetch('/api/lineworks-notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, ...opts }),
     })
     const text = await res.text()
     if (!res.ok) throw new Error(text || `HTTP ${res.status}`)
@@ -1068,7 +1068,7 @@ export default function App() {
                   const done2=filteredStores.filter(s=>pickingDone[s.id]).length
                   const pct=filteredStores.length>0?Math.round(done2/filteredStores.length*100):0
                   const msg=`お疲れ様です。報告させていただきます。\n\n【出荷報告】${dateStr} ${timeStr2}\n━━━━━━━━━━━━\n合計ケース数: ${total}C\n対象店舗: ${filteredStores.length}店舗\n作成済み: ${done2}/${filteredStores.length}店\n進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（ピッキング）`
-                  const ok=await sendLineWorks(msg)
+                  const ok=await sendLineWorks(msg, { alsoJimu: true })
                   if(ok){alert("LINE WORKSに通知しました！");const empty={};setPickingDone(empty);dbSet("pickingDone",empty)}
                 }} style={{background:"#06c755",color:"#fff",border:"none",borderRadius:9,padding:"9px 15px",fontSize:13,fontWeight:700,cursor:"pointer"}}>📲 LINE通知</Btn>
               </div>

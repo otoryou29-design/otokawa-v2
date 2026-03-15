@@ -4,7 +4,8 @@ const CLIENT_ID      = 'lHR2vHw4Z2B1IpLyXABb'
 const CLIENT_SECRET  = 'pV80_Aj0CY'
 const SERVICE_ACCOUNT = 'j3fl4.serviceaccount@works-38283'
 const BOT_ID          = '11818155'
-const CHANNEL_ID      = '5fb09f65-4ba0-c397-b76f-3bd75e48b288'
+const CHANNEL_ID       = '5fb09f65-4ba0-c397-b76f-3bd75e48b288'
+const CHANNEL_ID_JIMU  = '13801cbb-d70f-e2b1-60d4-cef45ee4de36'
 const PRIVATE_KEY     = `-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCywF3GdOxUGWD9
 wFjhT/Cp0SFguCThDS4rrMNVnCyOrSiZtTEaytaYfqrStE1HbDlP2Hi6ce6GUKaW
@@ -77,33 +78,36 @@ async function getAccessToken() {
   return data.access_token
 }
 
+async function sendToChannel(token, channelId, message) {
+  const r = await fetch(`https://www.worksapis.com/v1.0/bots/${BOT_ID}/channels/${channelId}/messages`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ content: { type: 'text', text: message } }),
+  })
+  const rText = await r.text()
+  console.log(`Channel ${channelId} status:`, r.status)
+  if (!r.ok && rText) {
+    let result
+    try { result = JSON.parse(rText) } catch(e) {}
+    if (result) throw new Error(JSON.stringify(result))
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
-  const { message } = req.body
+  const { message, alsoJimu } = req.body
   if (!message) return res.status(400).json({ error: 'message required' })
   try {
     const token = await getAccessToken()
-    console.log('Got token, sending message...')
-    const r = await fetch(`https://www.worksapis.com/v1.0/bots/${BOT_ID}/channels/${CHANNEL_ID}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ content: { type: 'text', text: message } }),
-    })
-    const rText = await r.text()
-    console.log('Message response status:', r.status, 'body:', rText.substring(0, 500))
-    let result
-    try {
-      result = JSON.parse(rText)
-    } catch (e) {
-      if (r.ok && rText === '') {
-        return res.status(200).json({ ok: true })
-      }
-      throw new Error(`Message API not JSON (status ${r.status}): ${rText.substring(0, 300)}`)
+    // ツルハグループに送信
+    await sendToChannel(token, CHANNEL_ID, message)
+    // alsoJimu=true なら音川青果事務部署にも送信
+    if (alsoJimu) {
+      await sendToChannel(token, CHANNEL_ID_JIMU, message)
     }
-    if (!r.ok) throw new Error(JSON.stringify(result))
     return res.status(200).json({ ok: true })
   } catch (e) {
     console.error('LINE WORKS error:', e)

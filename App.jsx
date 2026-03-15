@@ -556,10 +556,10 @@ export default function App() {
 
             {/* 日別売上推移チャート */}
             {monthDays.length>0 && (
-              <div className="card" style={{padding:18}}>
+              <div className="card" style={{padding:18,overflow:"hidden"}}>
                 <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>📈 日別売上推移</div>
-                <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
-                  <div style={{display:"flex",alignItems:"flex-end",gap:3,height:200,paddingBottom:24,position:"relative",minWidth:monthDays.length*32}}>
+                <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch",paddingBottom:8,marginRight:-4,marginLeft:-4}}>
+                  <div style={{display:"flex",alignItems:"flex-end",gap:3,height:200,paddingBottom:24,position:"relative",minWidth:Math.max(monthDays.length*30,monthDays.length>15?monthDays.length*28:0),paddingLeft:4,paddingRight:4}}>
                     {monthDays.map(([date,d])=>{
                       const dayNum=parseInt(date.split("-")[2])
                       const isTsuruha=dayNum===1||dayNum===10||dayNum===20

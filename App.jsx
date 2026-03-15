@@ -295,7 +295,7 @@ export default function App() {
     const miss=products.filter(p=>(regularStatus[p.id]||{}).missing).length
     const total2=products.length
     const pct=total2>0?Math.round((done2+miss)/total2*100):0
-    const msg=`お疲れ様です。報告させていただきます。\n\n【レギュラーパッケージ 確定】${timeStr}\n━━━━━━━━━━━━\n✅ 作成済み: ${done2}品目\n❌ 欠品: ${miss}品目\n📊 進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（パッケージ）`
+    const msg=`お疲れ様です。報告させていただきます。\n\n【レギュラーパッケージ 確定】${timeStr}\n━━━━━━━━━━━━\n作成済み: ${done2}品目\n欠品: ${miss}品目\n進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（パッケージ）`
     await sendLineWorks(msg)
     // レギュラーステータスをリセット
     const emptyReg={}
@@ -329,7 +329,7 @@ export default function App() {
     const miss=eventProducts.filter(p=>(eventStatus[p.id]||{}).missing).length
     const total2=eventProducts.length
     const pct=total2>0?Math.round((done2+miss)/total2*100):0
-    const msg=`お疲れ様です。報告させていただきます。\n\n【催事パッケージ 確定】${timeStr}\n━━━━━━━━━━━━\n🥬 作成済み: ${done2}品目\n❌ 欠品: ${miss}品目\n📊 進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（パッケージ）`
+    const msg=`お疲れ様です。報告させていただきます。\n\n【催事パッケージ 確定】${timeStr}\n━━━━━━━━━━━━\n作成済み: ${done2}品目\n欠品: ${miss}品目\n進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（パッケージ）`
     await sendLineWorks(msg)
     // 催事ステータスをリセット
     const emptyStatus={}
@@ -1067,7 +1067,7 @@ export default function App() {
                   const total=filteredStores.reduce((s,st)=>s+Number((shipReport[st.id]||{}).caseCount||0),0)
                   const done2=filteredStores.filter(s=>pickingDone[s.id]).length
                   const pct=filteredStores.length>0?Math.round(done2/filteredStores.length*100):0
-                  const msg=`お疲れ様です。報告させていただきます。\n\n【出荷報告】${dateStr} ${timeStr2}\n━━━━━━━━━━━━\n📦 合計ケース数: ${total}C\n🏪 対象店舗: ${filteredStores.length}店舗\n✅ 作成済み: ${done2}/${filteredStores.length}店\n📊 進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（ピッキング）`
+                  const msg=`お疲れ様です。報告させていただきます。\n\n【出荷報告】${dateStr} ${timeStr2}\n━━━━━━━━━━━━\n合計ケース数: ${total}C\n対象店舗: ${filteredStores.length}店舗\n作成済み: ${done2}/${filteredStores.length}店\n進捗率: ${pct}%\n━━━━━━━━━━━━\nセンター部（ピッキング）`
                   const ok=await sendLineWorks(msg)
                   if(ok){alert("LINE WORKSに通知しました！");const empty={};setPickingDone(empty);dbSet("pickingDone",empty)}
                 }} style={{background:"#06c755",color:"#fff",border:"none",borderRadius:9,padding:"9px 15px",fontSize:13,fontWeight:700,cursor:"pointer"}}>📲 LINE通知</Btn>

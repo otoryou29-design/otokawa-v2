@@ -604,15 +604,30 @@ export default function App() {
                 {(()=>{
                   const currentDate = selectedDate || rd.period || rd.dateKey || ""
                   const currentSales = rd.totalSales || 0
-                  // 前日を探す
                   const allDates = Object.keys(dailySalesHistory).sort()
                   const idx = allDates.indexOf(currentDate)
                   const prevDate = idx > 0 ? allDates[idx-1] : null
-                  const prevSales = prevDate ? (dailySalesHistory[prevDate]?.totalSales||0) : 0
+                  const prevData = prevDate ? dailySalesHistory[prevDate] : null
+                  const prevSales = prevData?.totalSales || 0
                   const dayNum = currentDate ? parseInt(currentDate.split("-")[2]||"0") : 0
                   const isTsuruhaDay = dayNum===1||dayNum===10||dayNum===20
                   const diff = prevSales>0 ? Math.round((currentSales-prevSales)/prevSales*100) : 0
-                  const absDiff = Math.abs(diff)
+
+                  // 店舗別の前日比分析
+                  const storeAlerts = []
+                  if(prevData && rd.storeRanking && prevData.storeRanking){
+                    const prevStoreMap = {}
+                    ;(prevData.storeRanking||[]).forEach(s=>{prevStoreMap[s.name]=s.sales})
+                    ;(rd.storeRanking||[]).forEach(s=>{
+                      const ps = prevStoreMap[s.name]
+                      if(ps && ps > 0){
+                        const sd = Math.round((s.sales-ps)/ps*100)
+                        if(sd <= -30) storeAlerts.push({name:s.name, diff:sd, prev:ps, cur:s.sales, level:"danger"})
+                        else if(sd <= -15) storeAlerts.push({name:s.name, diff:sd, prev:ps, cur:s.sales, level:"warn"})
+                      }
+                    })
+                    storeAlerts.sort((a,b)=>a.diff-b.diff)
+                  }
 
                   let emoji="🤖", comment=""
                   if(!prevSales){
@@ -622,7 +637,7 @@ export default function App() {
                     comment=`前日比 +${diff}%（${fmtJP(prevSales)}→${fmtJP(currentSales)}）と大幅増！${isTsuruhaDay?"ツルハの日効果ですね。":"好調な1日です。"}`
                   } else if(diff>=5){
                     emoji="📈"
-                    comment=`前日比 +${diff}% の微増。${isTsuruhaDay?"ツルハの日にしてはもう少し伸ばしたいところ。":"安定した売上です。"}`
+                    comment=`前日比 +${diff}%。${isTsuruhaDay?"ツルハの日にしてはもう少し伸ばしたいところ。":"安定した売上です。"}`
                   } else if(diff>=-5){
                     emoji="➡️"
                     comment=`前日比 ${diff>=0?"+":""}${diff}%。ほぼ横ばいです。`
@@ -638,7 +653,19 @@ export default function App() {
                     <div className="card" style={{padding:16,background:diff<=-20?"#fef2f2":diff>=20?"#f0fdf4":"#f8fafc",border:diff<=-20?"1.5px solid #fca5a5":diff>=20?"1.5px solid #86efac":"1.5px solid #e2e8f0"}}>
                       <div style={{fontSize:14,fontWeight:800,marginBottom:6}}>{emoji} AI分析</div>
                       <div style={{fontSize:13,lineHeight:1.7,color:"#374151"}}>{comment}</div>
-                      {prevDate&&<div style={{fontSize:11,color:"#9ca3af",marginTop:6}}>比較: {prevDate} → {currentDate}</div>}
+                      {storeAlerts.length>0&&(
+                        <div style={{marginTop:10,padding:"10px 12px",background:storeAlerts.some(s=>s.level==="danger")?"#fef2f2":"#fffbeb",borderRadius:8,border:storeAlerts.some(s=>s.level==="danger")?"1px solid #fca5a5":"1px solid #fde68a"}}>
+                          <div style={{fontSize:12,fontWeight:800,color:"#991b1b",marginBottom:6}}>⚠️ 売上ダウン店舗</div>
+                          {storeAlerts.slice(0,5).map((s,i)=>(
+                            <div key={i} style={{fontSize:12,lineHeight:1.8,color:s.level==="danger"?"#dc2626":"#92400e",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                              <span style={{fontWeight:700}}>{s.name}</span>
+                              <span style={{fontFamily:"'IBM Plex Mono',monospace",fontSize:11}}>{s.diff}%（{fmtJP(s.prev)}→{fmtJP(s.cur)}）</span>
+                            </div>
+                          ))}
+                          {storeAlerts.length>0&&<div style={{fontSize:11,color:"#6b7280",marginTop:6}}>{storeAlerts.filter(s=>s.level==="danger").length>0?"大幅減の店舗は欠品・陳列を確認してください。":"前日との差が大きい店舗です。曜日変動も考慮しましょう。"}</div>}
+                        </div>
+                      )}
+                      {prevDate&&<div style={{fontSize:11,color:"#9ca3af",marginTop:8}}>比較: {prevDate} → {currentDate}</div>}
                     </div>
                   )
                 })()}

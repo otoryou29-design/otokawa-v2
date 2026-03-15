@@ -558,20 +558,23 @@ export default function App() {
             {monthDays.length>0 && (
               <div className="card" style={{padding:18}}>
                 <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>📈 日別売上推移</div>
-                <div style={{display:"flex",alignItems:"flex-end",gap:2,height:200,overflowX:"auto",paddingBottom:24,position:"relative"}}>
-                  {monthDays.map(([date,d])=>{
-                    const dayNum=date.split("-")[2]
-                    const sales=d.totalSales||0
-                    const pct=maxDaySales>0?Math.round(sales/maxDaySales*100):0
-                    const isSelected=selectedDate===date
-                    return (
-                      <div key={date} onClick={()=>setSelectedDate(isSelected?"":date)} style={{flex:1,minWidth:22,maxWidth:40,display:"flex",flexDirection:"column",alignItems:"center",cursor:"pointer",position:"relative",height:"100%",justifyContent:"flex-end"}}>
-                        <div style={{fontSize:9,fontWeight:700,color:"#6b7280",marginBottom:2,fontFamily:"'IBM Plex Mono',monospace",whiteSpace:"nowrap"}}>{sales>=10000?`${Math.round(sales/10000)}万`:sales>0?`${Math.round(sales/1000)}k`:""}</div>
-                        <div style={{width:"80%",minHeight:2,height:`${pct}%`,background:isSelected?"#dc2626":accent,borderRadius:"4px 4px 0 0",transition:"all .2s",opacity:isSelected?1:.8}}/>
-                        <div style={{fontSize:10,fontWeight:isSelected?900:600,color:isSelected?"#dc2626":"#6b7280",marginTop:4,fontFamily:"'IBM Plex Mono',monospace",position:"absolute",bottom:-20}}>{dayNum}</div>
-                      </div>
-                    )
-                  })}
+                <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
+                  <div style={{display:"flex",alignItems:"flex-end",gap:3,height:200,paddingBottom:24,position:"relative",minWidth:monthDays.length*32}}>
+                    {monthDays.map(([date,d])=>{
+                      const dayNum=parseInt(date.split("-")[2])
+                      const isTsuruha=dayNum===1||dayNum===10||dayNum===20
+                      const sales=d.totalSales||0
+                      const pct=maxDaySales>0?Math.round(sales/maxDaySales*100):0
+                      const isSelected=selectedDate===date
+                      return (
+                        <div key={date} onClick={()=>setSelectedDate(isSelected?"":date)} style={{flex:"0 0 28px",display:"flex",flexDirection:"column",alignItems:"center",cursor:"pointer",position:"relative",height:"100%",justifyContent:"flex-end"}}>
+                          <div style={{fontSize:9,fontWeight:700,color:isTsuruha?"#dc2626":"#6b7280",marginBottom:2,fontFamily:"'IBM Plex Mono',monospace",whiteSpace:"nowrap"}}>{sales>=10000?`${Math.round(sales/10000)}万`:sales>0?`${Math.round(sales/1000)}k`:""}</div>
+                          <div style={{width:"80%",minHeight:2,height:`${pct}%`,background:isSelected?"#dc2626":isTsuruha?"#ef4444":accent,borderRadius:"4px 4px 0 0",transition:"all .2s",opacity:isSelected?1:isTsuruha?1:.8}}/>
+                          <div style={{fontSize:10,fontWeight:isSelected||isTsuruha?900:600,color:isSelected?"#dc2626":isTsuruha?"#dc2626":"#6b7280",marginTop:4,fontFamily:"'IBM Plex Mono',monospace",position:"absolute",bottom:-20}}>{dayNum}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             )}
@@ -597,6 +600,48 @@ export default function App() {
                     </div>
                   ))}
                 </div>
+                {/* AI分析コメント */}
+                {(()=>{
+                  const currentDate = selectedDate || rd.period || rd.dateKey || ""
+                  const currentSales = rd.totalSales || 0
+                  // 前日を探す
+                  const allDates = Object.keys(dailySalesHistory).sort()
+                  const idx = allDates.indexOf(currentDate)
+                  const prevDate = idx > 0 ? allDates[idx-1] : null
+                  const prevSales = prevDate ? (dailySalesHistory[prevDate]?.totalSales||0) : 0
+                  const dayNum = currentDate ? parseInt(currentDate.split("-")[2]||"0") : 0
+                  const isTsuruhaDay = dayNum===1||dayNum===10||dayNum===20
+                  const diff = prevSales>0 ? Math.round((currentSales-prevSales)/prevSales*100) : 0
+                  const absDiff = Math.abs(diff)
+
+                  let emoji="🤖", comment=""
+                  if(!prevSales){
+                    comment=`${currentDate} の売上は ${fmtJP(currentSales)} です。`
+                  } else if(diff>=20){
+                    emoji="🔥"
+                    comment=`前日比 +${diff}%（${fmtJP(prevSales)}→${fmtJP(currentSales)}）と大幅増！${isTsuruhaDay?"ツルハの日効果ですね。":"好調な1日です。"}`
+                  } else if(diff>=5){
+                    emoji="📈"
+                    comment=`前日比 +${diff}% の微増。${isTsuruhaDay?"ツルハの日にしてはもう少し伸ばしたいところ。":"安定した売上です。"}`
+                  } else if(diff>=-5){
+                    emoji="➡️"
+                    comment=`前日比 ${diff>=0?"+":""}${diff}%。ほぼ横ばいです。`
+                  } else if(diff>=-20){
+                    emoji="📉"
+                    comment=`前日比 ${diff}%。${isTsuruhaDay?"ツルハの日なのに下がっています。催事の見直しが必要かも。":"やや落ち込み。天候や曜日の影響を確認しましょう。"}`
+                  } else {
+                    emoji="⚠️"
+                    comment=`前日比 ${diff}%（${fmtJP(prevSales)}→${fmtJP(currentSales)}）と大幅ダウン。${isTsuruhaDay?"ツルハの日としては深刻です。原因の特定を。":"欠品や天候悪化など要因を至急確認してください。"}`
+                  }
+
+                  return (
+                    <div className="card" style={{padding:16,background:diff<=-20?"#fef2f2":diff>=20?"#f0fdf4":"#f8fafc",border:diff<=-20?"1.5px solid #fca5a5":diff>=20?"1.5px solid #86efac":"1.5px solid #e2e8f0"}}>
+                      <div style={{fontSize:14,fontWeight:800,marginBottom:6}}>{emoji} AI分析</div>
+                      <div style={{fontSize:13,lineHeight:1.7,color:"#374151"}}>{comment}</div>
+                      {prevDate&&<div style={{fontSize:11,color:"#9ca3af",marginTop:6}}>比較: {prevDate} → {currentDate}</div>}
+                    </div>
+                  )
+                })()}
                 {(rd.prodSales||[]).length>0&&(
                   <div className="card" style={{padding:20}}>
                     <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>🏆 人気商品 TOP5</div>

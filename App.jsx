@@ -542,14 +542,15 @@ export default function App() {
             {/* 月間サマリーカード */}
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:10}}>
               {[
-                {l:"月間売上",v:fmtJP(monthTotalSales),c:"#16a34a"},
+                {l:"月間売上（税別）",v:fmtJP(monthTotalSales),sub:`税込 ${fmtJP(Math.round(monthTotalSales*1.08))}`,c:"#16a34a"},
                 {l:"月間数量",v:`${monthTotalQty.toLocaleString()}点`,c:"#2563eb"},
-                {l:"日販平均",v:fmtJP(monthAvgDaily),c:"#7c3aed"},
+                {l:"日販平均（税別）",v:fmtJP(monthAvgDaily),sub:`税込 ${fmtJP(Math.round(monthAvgDaily*1.08))}`,c:"#7c3aed"},
                 {l:"営業日数",v:`${monthDays.length}日`,c:accent}
               ].map(k=>(
                 <div key={k.l} className="card" style={{padding:14}}>
                   <div style={{fontSize:11,color:"#6b7280",marginBottom:4}}>{k.l}</div>
                   <div style={{fontSize:20,fontWeight:900,color:k.c,fontFamily:"'IBM Plex Mono',monospace"}}>{k.v}</div>
+                  {k.sub&&<div style={{fontSize:10,color:"#9ca3af",marginTop:2,fontFamily:"'IBM Plex Mono',monospace"}}>{k.sub}</div>}
                 </div>
               ))}
             </div>
@@ -593,10 +594,11 @@ export default function App() {
             {rd&&(
               <>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:11}}>
-                  {[{l:"総売上",v:fmtJP(rd.totalSales),c:"#16a34a"},{l:"総数量",v:`${(rd.totalQty||0).toLocaleString()}点`,c:"#2563eb"},{l:"平均単価",v:`${Math.round(rd.avgPrice||0)}円`,c:"#7c3aed"},{l:"出店数",v:`${(rd.storeRanking||[]).length}店`,c:accent}].map(k=>(
+                  {[{l:"総売上（税別）",v:fmtJP(rd.totalSales),sub:`税込 ${fmtJP(Math.round(rd.totalSales*1.08))}`,c:"#16a34a"},{l:"総数量",v:`${(rd.totalQty||0).toLocaleString()}点`,c:"#2563eb"},{l:"平均単価（税別）",v:`${Math.round(rd.avgPrice||0)}円`,sub:`税込 ${Math.round((rd.avgPrice||0)*1.08)}円`,c:"#7c3aed"},{l:"出店数",v:`${(rd.storeRanking||[]).length}店`,c:accent}].map(k=>(
                     <div key={k.l} className="card" style={{padding:16}}>
                       <div style={{fontSize:12,color:"#6b7280",marginBottom:5}}>{k.l}</div>
                       <div style={{fontSize:22,fontWeight:900,color:k.c,fontFamily:"'IBM Plex Mono',monospace"}}>{k.v}</div>
+                      {k.sub&&<div style={{fontSize:11,color:"#9ca3af",marginTop:3,fontFamily:"'IBM Plex Mono',monospace"}}>{k.sub}</div>}
                     </div>
                   ))}
                 </div>

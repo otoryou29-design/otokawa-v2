@@ -127,7 +127,10 @@ export default function App() {
   const [now,setNow] = useState(new Date())
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t)},[])
 
-  const [tab,setTab]             = useState("sales")
+  const [tab,setTab]             = useState(() => {
+    const hash = window.location.hash.replace("#", "")
+    return ["sales","shelf","regular","event","stores","stock","reports","admin"].includes(hash) ? hash : "sales"
+  })
   const [area,setArea]           = useState("全エリア")
   const [catFilter,setCatFilter] = useState("全品目")
   const [shelfEdit,setShelfEdit] = useState(false)
